@@ -1,5 +1,6 @@
 # DjangoPolls
-Build a voting system for deciding where to have lunch.
+
+A voting system for deciding where to have lunch.
 
 2 types of users: admin and regular users
 
