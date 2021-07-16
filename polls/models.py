@@ -12,11 +12,7 @@ class Diner(models.Model):
 
 
 class Answer(models.Model):
-    diner_id = models.OneToOneField(
-        Diner,
-        on_delete=models.CASCADE,
-        # primary_key=True,
-    )
+    diner_id = models.OneToOneField(Diner, on_delete=models.CASCADE)
     votes = models.IntegerField(verbose_name="Votes", default=0)
 
     def __str__(self):

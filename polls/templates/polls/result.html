@@ -1,9 +1,12 @@
 <a href="/">Home</a>
 <h1>{{ question.title }}</h1>
+
+{{ max_votes_answer }} - votes: {{ max_votes_answer.votes }}
+<br>
+<hr>
+
 <ul>
 {% for answer in question.answers.all|dictsortreversed:"votes" %}
     <li>{{ answer }} - votes: {{ answer.votes }}</li>
 {% endfor %}
 </ul>
-
-<a href="{% url 'polls:each_question' question.id %}">Vote again</a>

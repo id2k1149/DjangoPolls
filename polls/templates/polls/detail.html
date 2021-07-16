@@ -2,18 +2,30 @@
 {% if question.is_active %}
 
     <h1>{{ question.title }}</h1>
+    <br>
+    {{ max_votes_answer }} - {{ max_votes_answer.votes }}
+    <hr>
+
     {% if error_message %}
         <p><strong>{{ error_message }}</strong></p>
     {% endif %}
 
     <form action="{% url 'polls:vote' question.id %}" method="post">
         {% csrf_token %}
-        {% for answer in question.answer_set.all %}
+        {% for answer in question.answers.all %}
+
             <input type="radio"
                    name="answer"
                    value="{{ answer.id }}" />
-                {{ answer.answer }}
+                {{ answer }}
                 <br>
+                <ul>
+                    {% for each in answer.diner_id.description_set.all %}
+                        <li>
+                        {{ each.description }} {{ each.digital_info }}
+                        </li>
+                    {% endfor %}
+                </ul>
         {% endfor %}
          <br>
         <input type="submit" value="Vote" />
