@@ -49,16 +49,6 @@ def vote(request, poll_id):
 
     if request.POST.get('answer'):
         try:
-            voter = Record()
-            voter.user = request.user
-            voter.question = question
-            if voter.voted_already():
-                voter_to_delete = Record.objects.get(user=request.user, question=question)
-                answer_to_change = question.answers.get(pk=voter_to_delete.answer.id)
-                answer_to_change.votes -= 1
-                answer_to_change.save()
-                voter_to_delete.delete()
-
             selected_answer = question.answers.get(pk=request.POST['answer'])
         except (question.answers.get(pk=request.POST['answer']).DoesNotExist,
                 UnicodeEncodeError,
@@ -71,8 +61,23 @@ def vote(request, poll_id):
         selected_answer.votes += 1
         selected_answer.save()
 
-        voter.answer = selected_answer
-        voter.save()
+        voter = Record()
+        voter.user = request.user
+        voter.question = question
+        if voter.voted_already():
+            voter_to_change = Record.objects.get(user=request.user, question=question)
+            answer_to_change = question.answers.get(pk=voter_to_change.answer.id)
+            answer_to_change.votes -= 1
+            answer_to_change.save()
+            voter_to_change.answer = selected_answer
+            voter_to_change.save()
+        else:
+            voter.answer = selected_answer
+            voter.save()
+
+        max_votes_answer = question.answers.order_by('-votes').first()
+        question.result = max_votes_answer.diner_id
+        question.save()
 
         return HttpResponseRedirect(reverse('polls:best', args=(question.id,)))
     else:
