@@ -2,6 +2,9 @@
 {% if question.is_active %}
 
     <h1>{{ question.title }}</h1>
+    <br>
+    {{ max_votes_answer }} has the best result
+    <hr>
 
     {% if error_message %}
         <p><strong>{{ error_message }}</strong></p>
@@ -14,7 +17,7 @@
             <input type="radio"
                    name="answer"
                    value="{{ answer.pk }}" />
-                {{ answer }} {{answer.pk}}
+                {{ answer }}
                 <br>
                 <ul>
                     {% for each in answer.diner_id.description_set.all %}

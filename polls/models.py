@@ -28,6 +28,11 @@ class Question(models.Model):
     date_published = models.DateField(default=date.today)
     answers = models.ManyToManyField(Answer)
     is_active = models.BooleanField(default=True, verbose_name="Active poll")
+    result = models.ForeignKey(Diner,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               verbose_name="Result")
 
     def __str__(self):
         return self.title
