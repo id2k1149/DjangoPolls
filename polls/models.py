@@ -1,12 +1,12 @@
 from django.db import models
-import datetime
+from datetime import date, datetime
 from django.contrib.auth.models import User
 
 
 # Create your models here.
 class Question(models.Model):
     title = models.CharField(max_length=128, verbose_name="Question", default='Where to have a lunch?')
-    date_published = models.DateTimeField(default=datetime.datetime.now())
+    date_published = models.DateField(default=date.today)
     is_active = models.BooleanField(default=True, verbose_name="Active poll")
 
     def __str__(self):
@@ -32,7 +32,7 @@ class Description(models.Model):
 
 
 class Record(models.Model):
-    date = models.DateTimeField(default=datetime.datetime.now())
+    date = models.DateField(default=date.today)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="User")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='Question')
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, verbose_name='Answer')

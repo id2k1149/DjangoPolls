@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
 from .models import Question, Record
-import datetime
+from datetime import date, datetime
 
 
 # Create your views here.
@@ -13,9 +13,11 @@ class IndexView(ListView):
 
     def get_queryset(self):
         """Return filtered questions"""
-        if datetime.datetime.now().hour < 23:
+        print(datetime.now().hour)
+        print(date.today())
+        if datetime.now().hour < 23:
             questions = Question.objects \
-                .filter(date_published__date=datetime.date.today()) \
+                .filter(date_published=date.today()) \
                 .order_by('-date_published')
             return questions
 
@@ -59,7 +61,6 @@ def vote(request, poll_id):
         selected_answer.save()
 
         voter.answer = selected_answer
-        voter.date = datetime.datetime.now()
         voter.save()
 
         return HttpResponseRedirect(reverse('polls:best', args=(question.id,)))
