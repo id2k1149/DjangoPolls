@@ -2,7 +2,7 @@
 <h1>{{ question.title }}</h1>
 <ul>
 {% for answer in question.answers.all|dictsortreversed:"votes" %}
-    <li>{{ answer.answer }} - votes: {{ answer.votes }}</li>
+    <li>{{ answer }} - votes: {{ answer.votes }}</li>
 {% endfor %}
 </ul>
 
