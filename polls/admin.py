@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, Answer, Description, Record
+from .models import Question, Answer, Description, Record, Diner
 
 
 class AnswerInline(admin.TabularInline):
@@ -32,3 +32,4 @@ admin.site.register(Question, QuestionAdmin)
 admin.site.register(Answer)
 admin.site.register(Description)
 admin.site.register(Record, RecordAdmin)
+admin.site.register(Diner)

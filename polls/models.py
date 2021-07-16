@@ -4,12 +4,23 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
+class Diner(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
+
+
 class Answer(models.Model):
-    answer = models.CharField(max_length=64, verbose_name="Answer")
+    diner_id = models.OneToOneField(
+        Diner,
+        on_delete=models.CASCADE,
+        # primary_key=True,
+    )
     votes = models.IntegerField(verbose_name="Votes", default=0)
 
     def __str__(self):
-        return self.answer
+        return self.diner_id.name
 
 
 class Question(models.Model):
@@ -23,7 +34,7 @@ class Question(models.Model):
 
 
 class Description(models.Model):
-    answer_id = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    diner_id = models.ForeignKey(Diner, on_delete=models.CASCADE)
     description = models.CharField(max_length=64, unique=False)
     digital_info = models.DecimalField(decimal_places=2, default=0, max_digits=5)
 
