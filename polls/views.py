@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from .models import Question, Record
 from datetime import date, datetime
 
@@ -20,8 +20,8 @@ class IndexView(ListView):
             return questions
 
 
-def question_detail_view(request, pk):
-    question = get_object_or_404(Question, id=pk)
+def question_detail_view(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
     max_votes_answer = question.answers.order_by('-votes').first()
     if max_votes_answer.votes == 0:
         max_votes_answer = ''
@@ -30,30 +30,30 @@ def question_detail_view(request, pk):
     voter.user = request.user
     voter.question = question
     if voter.voted_already():
-        return render(request, 'polls/each_question.html', {
+        return render(request, 'polls/detail.html', {
             'question': question,
             'error_message': "You already voted",
             'max_votes_answer': max_votes_answer,
         })
     else:
-        return render(request, 'polls/each_question.html', {
+        return render(request, 'polls/detail.html', {
             'question': question,
             'max_votes_answer': max_votes_answer,
         })
 
 
-def vote(request, poll_id):
-    question = get_object_or_404(Question, pk=poll_id)
+def vote(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
     if not question.is_active:
         return HttpResponse('Sorry, this question is not actual now')
 
     if request.POST.get('answer'):
         try:
-            selected_answer = question.answers.get(pk=request.POST['answer'])
-        except (question.answers.get(pk=request.POST['answer']).DoesNotExist,
+            selected_answer = question.answers.get(id=request.POST['answer'])
+        except (question.answers.get(id=request.POST['answer']).DoesNotExist,
                 UnicodeEncodeError,
                 ValueError):
-            return render(request, 'polls/detail.html', {
+            return render(request, 'polls/result.html', {
                 'question': question,
                 'error_message': "Invalid answer",
             })
@@ -66,7 +66,7 @@ def vote(request, poll_id):
         voter.question = question
         if voter.voted_already():
             voter_to_change = Record.objects.get(user=request.user, question=question)
-            answer_to_change = question.answers.get(pk=voter_to_change.answer.id)
+            answer_to_change = question.answers.get(id=voter_to_change.answer.id)
             answer_to_change.votes -= 1
             answer_to_change.save()
             voter_to_change.answer = selected_answer
@@ -79,24 +79,19 @@ def vote(request, poll_id):
         question.result = max_votes_answer.diner_id
         question.save()
 
-        return HttpResponseRedirect(reverse('polls:best', args=(question.id,)))
+        return HttpResponseRedirect(reverse('polls:result', args=(question.id,)))
     else:
-        return render(request, 'polls/each_question.html', {
+        return render(request, 'polls/result.html', {
             'question': question,
             'error_message': "Please, choose an answer",
         })
 
 
-class ResultsView(DetailView):
-    model = Question
-    template_name = 'polls/results.html'
-
-
-def best_result(request, question_id):
+def result(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     max_votes_answer = question.answers.order_by('-votes').first()
 
-    return render(request, 'polls/best.html', {
+    return render(request, 'polls/result.html', {
         'question': question,
         'max_votes_answer': max_votes_answer,
     })
