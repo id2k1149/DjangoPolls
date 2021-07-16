@@ -1,0 +1,16 @@
+{% if we_have_questions %}
+<h1>Please vote</h1>
+    <ul>
+        {% for question in we_have_questions %}
+            <li>
+                <a href="{% url 'polls:each_question' pk=question.id %}">
+                {{ question.title }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>
+        <h1>Sorry, no more questions for today</h1>
+    </p>
+{% endif %}

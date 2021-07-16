@@ -1,0 +1,27 @@
+<a href="/">Home</a>
+{% if question.is_active %}
+
+    <h1>{{ question.title }}</h1>
+    {% if error_message %}
+        <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+        {% csrf_token %}
+        {% for answer in question.answer_set.all %}
+            <input type="radio"
+                   name="answer"
+                   value="{{ answer.id }}" />
+                {{ answer.answer }}
+                <br>
+        {% endfor %}
+         <br>
+        <input type="submit" value="Vote" />
+    </form>
+
+{% else %}
+    <p>Sorry, this question is not actual now</p>
+{% endif %}
+
+
+
