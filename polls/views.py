@@ -20,10 +20,6 @@ class IndexView(ListView):
             return questions
 
 
-# class QuestionDetailView(DetailView):
-#     model = Question
-#     template_name = 'polls/detail.html'
-
 def question_detail_view(request, pk):
     question = get_object_or_404(Question, id=pk)
     max_votes_answer = question.answers.order_by('-votes').first()
@@ -34,7 +30,6 @@ def question_detail_view(request, pk):
     voter.user = request.user
     voter.question = question
     if voter.voted_already():
-        # return HttpResponse('Вы уже голосовали в этом опросе')
         return render(request, 'polls/each_question.html', {
             'question': question,
             'error_message': "You already voted",
@@ -52,18 +47,28 @@ def vote(request, poll_id):
     if not question.is_active:
         return HttpResponse('Sorry, this question is not actual now')
 
-    voter = Record()
-    voter.user = request.user
-    voter.question = question
-    if voter.voted_already():
-        # return HttpResponse('Вы уже голосовали в этом опросе')
-        return render(request, 'polls/each_question.html', {
-            'question': question,
-            'error_message': "You already voted",
-        })
+    # voter = Record()
+    # voter.user = request.user
+    # voter.question = question
+    # if voter.voted_already():
+    #     # return HttpResponse('Вы уже голосовали в этом опросе')
+    #     return render(request, 'polls/each_question.html', {
+    #         'question': question,
+    #         'error_message': "You already voted",
+    #     })
 
     if request.POST.get('answer'):
         try:
+            voter = Record()
+            voter.user = request.user
+            voter.question = question
+            if voter.voted_already():
+                voter_to_delete = Record.objects.get(user=request.user, question=question)
+                answer_to_change = question.answers.get(pk=voter_to_delete.answer.id)
+                answer_to_change.votes -= 1
+                answer_to_change.save()
+                voter_to_delete.delete()
+
             selected_answer = question.answers.get(pk=request.POST['answer'])
         except (question.answers.get(pk=request.POST['answer']).DoesNotExist,
                 UnicodeEncodeError,
@@ -72,6 +77,7 @@ def vote(request, poll_id):
                 'question': question,
                 'error_message': "Invalid answer",
             })
+
         selected_answer.votes += 1
         selected_answer.save()
 
