@@ -8,7 +8,7 @@
 
     <form action="{% url 'polls:vote' question.id %}" method="post">
         {% csrf_token %}
-        {% for answer in question.answer_set.all %}
+        {% for answer in question.answers.all %}
 
             <input type="radio"
                    name="answer"

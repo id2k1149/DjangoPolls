@@ -28,7 +28,7 @@ class IndexView(ListView):
 
 def question_detail_view(request, pk):
     question = get_object_or_404(Question, id=pk)
-    max_votes_answer = question.answer_set.order_by('-votes').first()
+    max_votes_answer = question.answers.order_by('-votes').first()
 
     return render(request, 'polls/each_question.html', {
         'question': question,
@@ -49,8 +49,8 @@ def vote(request, poll_id):
 
     if request.POST.get('answer'):
         try:
-            selected_answer = question.answer_set.get(pk=request.POST['answer'])
-        except (question.answer_set.get(pk=request.POST['answer']).DoesNotExist,
+            selected_answer = question.answers.get(pk=request.POST['answer'])
+        except (question.answers.get(pk=request.POST['answer']).DoesNotExist,
                 UnicodeEncodeError,
                 ValueError):
             return render(request, 'polls/detail.html', {
@@ -65,7 +65,7 @@ def vote(request, poll_id):
 
         return HttpResponseRedirect(reverse('polls:best', args=(question.id,)))
     else:
-        return render(request, 'polls/detail.html', {
+        return render(request, 'polls/each_question.html', {
             'question': question,
             'error_message': "Please, choose an answer",
         })
@@ -78,7 +78,7 @@ class ResultsView(DetailView):
 
 def best_result(request, question_id):
     question = get_object_or_404(Question, id=question_id)
-    max_votes_answer = question.answer_set.order_by('-votes').first()
+    max_votes_answer = question.answers.order_by('-votes').first()
 
     return render(request, 'polls/best.html', {
                 'question': question,
