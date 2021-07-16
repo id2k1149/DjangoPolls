@@ -44,8 +44,6 @@ def question_detail_view(request, question_id):
 
 def vote(request, question_id):
     question = get_object_or_404(Question, id=question_id)
-    if not question.is_active:
-        return HttpResponse('Sorry, this question is not actual now')
 
     if request.POST.get('answer'):
         try:

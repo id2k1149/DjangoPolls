@@ -10,7 +10,7 @@ class AnswerInline(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,
-         {'fields': ['title', 'result', 'is_active']}
+         {'fields': ['title', 'result']}
          ),
         ('Date info',
          {'fields': ['date_published'],
@@ -19,7 +19,7 @@ class QuestionAdmin(admin.ModelAdmin):
     ]
     inlines = [AnswerInline]
 
-    list_display = ('title', 'date_published', 'is_active', 'result')
+    list_display = ('title', 'date_published', 'result')
 
 
 class RecordAdmin(admin.ModelAdmin):
@@ -32,7 +32,6 @@ class AnswerAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Question, QuestionAdmin)
-# admin.site.register(Question)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Description)
 admin.site.register(Record, RecordAdmin)
