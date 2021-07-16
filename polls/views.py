@@ -47,16 +47,6 @@ def vote(request, poll_id):
     if not question.is_active:
         return HttpResponse('Sorry, this question is not actual now')
 
-    # voter = Record()
-    # voter.user = request.user
-    # voter.question = question
-    # if voter.voted_already():
-    #     # return HttpResponse('Вы уже голосовали в этом опросе')
-    #     return render(request, 'polls/each_question.html', {
-    #         'question': question,
-    #         'error_message': "You already voted",
-    #     })
-
     if request.POST.get('answer'):
         try:
             voter = Record()
