@@ -11,6 +11,10 @@ from .forms import RegistrationForm
 
 
 # Create your views here.
+def main_view(request):
+    return render(request, 'polls/index.html')
+
+
 class UserLoginView(LoginView):
     template_name = 'polls/login.html'
 
@@ -22,8 +26,8 @@ class UserCreateView(CreateView):
     success_url = reverse_lazy('polls:login')
 
 
-class IndexView(ListView):
-    template_name = 'polls/index.html'
+class QuestionsListView(ListView):
+    template_name = 'polls/questions.html'
     context_object_name = 'we_have_questions'
 
     def get_queryset(self):

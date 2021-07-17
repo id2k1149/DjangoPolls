@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
+    {% if we_have_questions %}
+    <h1 class="mt-4">Please vote</h1>
+        <p>
+            <ul>
+                {% for question in we_have_questions %}
+                    <li>
+                        <a href="{% url 'polls:detail' question_id=question.id %}">
+                        {{ question.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% else %}
+        <p>
+            <h1>Sorry, no more questions for today</h1>
+        </p>
+    {% endif %}
+{% endblock %}
