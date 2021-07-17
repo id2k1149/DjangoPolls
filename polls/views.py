@@ -1,12 +1,27 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
-from django.views.generic import ListView
-from .models import Question, Record
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, CreateView
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.models import User
 from datetime import date, datetime
+from .models import Question, Record
+from .forms import RegistrationForm
 
 
 # Create your views here.
+class UserLoginView(LoginView):
+    template_name = 'polls/login.html'
+
+
+class UserCreateView(CreateView):
+    model = User
+    template_name = 'polls/register.html'
+    form_class = RegistrationForm
+    success_url = reverse_lazy('polls:login')
+
+
 class IndexView(ListView):
     template_name = 'polls/index.html'
     context_object_name = 'we_have_questions'
@@ -20,6 +35,7 @@ class IndexView(ListView):
             return questions
 
 
+@login_required
 def question_detail_view(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     max_votes_answer = question.answers.order_by('-votes').first()
@@ -51,7 +67,7 @@ def vote(request, question_id):
         except (question.answers.get(id=request.POST['answer']).DoesNotExist,
                 UnicodeEncodeError,
                 ValueError):
-            return render(request, 'polls/result.html', {
+            return render(request, 'polls/detail.html', {
                 'question': question,
                 'error_message': "Invalid answer",
             })
@@ -79,9 +95,11 @@ def vote(request, question_id):
 
         return HttpResponseRedirect(reverse('polls:result', args=(question.id,)))
     else:
-        return render(request, 'polls/result.html', {
+        max_votes_answer = question.answers.order_by('-votes').first()
+        return render(request, 'polls/detail.html', {
             'question': question,
             'error_message': "Please, choose an answer",
+            'max_votes_answer': max_votes_answer,
         })
 
 

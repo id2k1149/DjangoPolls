@@ -1,12 +1,19 @@
-<a href="/">Home</a>
-<h1>{{ question.title }}</h1>
+{% extends "base.html" %}
 
-{{ max_votes_answer }} - votes: {{ max_votes_answer.votes }}
-<br>
-<hr>
+{% block title %}
+    Result
+{% endblock %}
 
-<ul>
-{% for answer in question.answers.all|dictsortreversed:"votes" %}
-    <li>{{ answer }} - votes: {{ answer.votes }}</li>
-{% endfor %}
-</ul>
+{% block content %}
+    <h1>{{ question.title }}</h1>
+
+    {{ max_votes_answer }} - votes: {{ max_votes_answer.votes }}
+    <br>
+    <hr>
+
+    <ul>
+    {% for answer in question.answers.all|dictsortreversed:"votes" %}
+        <li>{{ answer }} - votes: {{ answer.votes }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
