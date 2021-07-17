@@ -26,9 +26,13 @@ class VoterAdmin(admin.ModelAdmin):
     list_display = ('user', 'date', 'question', 'answer')
 
 
+class VoteCounterAdmin(admin.ModelAdmin):
+    list_display = ('answer_id', 'votes')
+
+
 # Register your models here.
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(VoteCounter)
+admin.site.register(VoteCounter, VoteCounterAdmin)
 admin.site.register(Description)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(Answer)
