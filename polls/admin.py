@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, Answer, Description, Record, Diner
+from .models import Question, VoteCounter, Description, Voter, Answer
 
 
 class AnswerInline(admin.TabularInline):
@@ -22,17 +22,13 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = ('title', 'date_published', 'result')
 
 
-class RecordAdmin(admin.ModelAdmin):
+class VoterAdmin(admin.ModelAdmin):
     list_display = ('user', 'date', 'question', 'answer')
-
-
-class AnswerAdmin(admin.ModelAdmin):
-    inlines = [AnswerInline]
 
 
 # Register your models here.
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(Answer, AnswerAdmin)
+admin.site.register(VoteCounter)
 admin.site.register(Description)
-admin.site.register(Record, RecordAdmin)
-admin.site.register(Diner)
+admin.site.register(Voter, VoterAdmin)
+admin.site.register(Answer)
