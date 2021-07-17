@@ -23,9 +23,9 @@
                 {{ answer }}
                 <br>
                 <ul>
-                    {% for each_diner in answer.diner_id.description_set.all %}
+                    {% for each_answer in answer.answer_id.description_set.all %}
                         <li>
-                        {{ each_diner.description }} {{ each_diner.digital_info }}
+                        {{ each_answer.description }} {{ each_answer.digital_info }}
                         </li>
                     {% endfor %}
                 </ul>

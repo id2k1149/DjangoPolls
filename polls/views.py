@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from datetime import date, datetime
-from .models import Question, Record
+from .models import Question, Voter
 from .forms import RegistrationForm
 
 
@@ -35,14 +35,14 @@ class IndexView(ListView):
             return questions
 
 
-@login_required
+# @login_required
 def question_detail_view(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     max_votes_answer = question.answers.order_by('-votes').first()
     if max_votes_answer.votes == 0:
         max_votes_answer = ''
 
-    voter = Record()
+    voter = Voter()
     voter.user = request.user
     voter.question = question
     if voter.voted_already():
@@ -75,11 +75,11 @@ def vote(request, question_id):
         selected_answer.votes += 1
         selected_answer.save()
 
-        voter = Record()
+        voter = Voter()
         voter.user = request.user
         voter.question = question
         if voter.voted_already():
-            voter_to_change = Record.objects.get(user=request.user, question=question)
+            voter_to_change = Voter.objects.get(user=request.user, question=question)
             answer_to_change = question.answers.get(id=voter_to_change.answer.id)
             answer_to_change.votes -= 1
             answer_to_change.save()
@@ -90,7 +90,7 @@ def vote(request, question_id):
             voter.save()
 
         max_votes_answer = question.answers.order_by('-votes').first()
-        question.result = max_votes_answer.diner_id
+        question.result = max_votes_answer.answer_id
         question.save()
 
         return HttpResponseRedirect(reverse('polls:result', args=(question.id,)))
