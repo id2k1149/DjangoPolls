@@ -7,31 +7,25 @@ Home
 
 {% block content %}
 
-    <div class="col-md-12" style="position: relative;" data-aos="fade-up" data-aos-delay="200">
+<img src="{% static 'images/undraw_investing_7u74.svg' %}"
+     alt="Image"
+     class="img-fluid img-absolute">
 
-
-        <img src="{% static 'images/undraw_investing_7u74.svg' %}"
-             alt="Image"
-             class="img-fluid img-absolute">
-
-        <div class="row mb-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="col-lg-6 mr-auto">
-                <h1>Survey for your company</h1>
-                <p class="mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                <div>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'polls:questions' %}" class="btn btn-primary mr-2 mb-2">
-                        Vote
-                    </a>
-                    {% else %}
-                    <a href="{% url 'polls:login' %}" class="btn btn-primary mr-2 mb-2">
-                        Sign in
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-
-
+<div class="row mb-4" data-aos="fade-up" data-aos-delay="200">
+    <div class="col-lg-6 mr-auto">
+        <h1>Survey for your company</h1>
+        <p class="mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'polls:questions' %}" class="btn btn-primary mr-2 mb-2">
+                    Vote
+                </a>
+            {% else %}
+                <a href="{% url 'polls:login' %}" class="btn btn-primary mr-2 mb-2">
+                    Sign in
+                </a>
+            {% endif %}
+        </div>
     </div>
 </div>
 
