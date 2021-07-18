@@ -7,7 +7,7 @@ from django.views.generic import ListView, CreateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from datetime import date, datetime
-from .models import Question, Voter, VoteCounter
+from .models import Question, Voter, VotesCounter
 from .forms import RegistrationForm, QuestionForm
 
 
@@ -43,7 +43,7 @@ class QuestionsListView(LoginRequiredMixin, ListView):
 @login_required
 def question_detail_view(request, question_id):
     question = get_object_or_404(Question, id=question_id)
-    max_votes_answer = question.answers.order_by('-votes').first()
+    max_votes_answer = question.votescounter_set.order_by('-votes').first()
     if max_votes_answer.votes == 0:
         max_votes_answer = ''
 
@@ -69,8 +69,8 @@ def vote(request, question_id):
 
     if request.POST.get('answer'):
         try:
-            selected_answer = question.answers.get(id=request.POST['answer'])
-        except (question.answers.get(id=request.POST['answer']).DoesNotExist,
+            selected_answer = question.votescounter_set.get(id=request.POST['answer'])
+        except (question.votescounter_set.get(id=request.POST['answer']).DoesNotExist,
                 UnicodeEncodeError,
                 ValueError):
             return render(request, 'polls/question.html', {
@@ -86,7 +86,7 @@ def vote(request, question_id):
         voter.question = question
         if voter.voted_already():
             voter_to_change = Voter.objects.get(user=request.user, question=question)
-            answer_to_change = question.answers.get(id=voter_to_change.answer.id)
+            answer_to_change = question.votescounter_set.get(id=voter_to_change.answer.id)
             answer_to_change.votes -= 1
             answer_to_change.save()
             voter_to_change.answer = selected_answer
@@ -95,13 +95,13 @@ def vote(request, question_id):
             voter.answer = selected_answer
             voter.save()
 
-        max_votes_answer = question.answers.order_by('-votes').first()
+        max_votes_answer = question.votescounter_set.order_by('-votes').first()
         question.result = max_votes_answer.answer_id
         question.save()
 
         return HttpResponseRedirect(reverse('polls:result', args=(question.id,)))
     else:
-        max_votes_answer = question.answers.order_by('-votes').first()
+        max_votes_answer = question.votescounter_set.order_by('-votes').first()
         return render(request, 'polls/question.html', {
             'question': question,
             'error_message': "Please, choose an answer",
@@ -112,26 +112,12 @@ def vote(request, question_id):
 @login_required
 def result(request, question_id):
     question = get_object_or_404(Question, id=question_id)
-    max_votes_answer = question.answers.order_by('-votes').first()
+    max_votes_answer = question.votescounter_set.order_by('-votes').first()
 
     return render(request, 'polls/result.html', {
         'question': question,
         'max_votes_answer': max_votes_answer,
     })
-
-
-# CreateView
-# class QuestionCreateView(LoginRequiredMixin, CreateView):
-#     fields = ('title',)
-#     model = Question
-#     success_url = reverse_lazy('polls:questions')
-#     template_name = 'polls/add_poll.html'
-#
-#     def post(self, request, *args, **kwargs):
-#         return super().post(request, *args, **kwargs)
-#
-#     def form_valid(self, form):
-#         return super().form_valid(form)
 
 
 @login_required
@@ -142,7 +128,7 @@ def add_poll(request):
     else:
         form = QuestionForm(request.POST, files=request.FILES)
         if form.is_valid():
-            answers = VoteCounter.objects.all()
+            answers = VotesCounter.objects.all()
             for answer in answers:
                 answer.votes = 0
                 answer.save()
