@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
-from .models import Question, VoteCounter
+from .models import Question, VoteCounter, Answer
 
 
 class RegistrationForm(UserCreationForm):
@@ -14,10 +14,31 @@ class QuestionForm(forms.ModelForm):
     title = forms.CharField(label='Question',
                             widget=forms.TextInput(attrs={'placeholder': 'Question', 'class': 'form-control'}))
 
-    answers = forms.ModelMultipleChoiceField(label='Options',
+    answers = forms.ModelMultipleChoiceField(label='Answers',
                                              queryset=VoteCounter.objects.all(),
                                              widget=forms.CheckboxSelectMultiple())
 
+    diners = forms.ModelMultipleChoiceField(label='Diners',
+                                            queryset=Answer.objects.all(),
+                                            widget=forms.CheckboxSelectMultiple())
+
     class Meta:
         model = Question
+        fields = ('title', 'answers')
+
+
+class AnswerForm(forms.ModelForm):
+    title = forms.CharField(label='Question',
+                            widget=forms.TextInput(attrs={'placeholder': 'Question', 'class': 'form-control'}))
+
+    answers = forms.ModelMultipleChoiceField(label='Answers',
+                                             queryset=VoteCounter.objects.all(),
+                                             widget=forms.CheckboxSelectMultiple())
+
+    diners = forms.ModelMultipleChoiceField(label='Diners',
+                                            queryset=Answer.objects.all(),
+                                            widget=forms.CheckboxSelectMultiple())
+
+    class Meta:
+        model = Answer
         fields = ('title', 'answers')

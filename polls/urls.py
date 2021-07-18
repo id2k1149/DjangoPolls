@@ -13,6 +13,6 @@ urlpatterns = [
     path('login/', views.UserLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', views.UserCreateView.as_view(), name='register'),
-    # path('add_poll/', views.QuestionCreateView.as_view(), name='add_poll'),
+    path('add_answer/', views.AnswerCreateView.as_view(), name='add_answer'),
     path('add_poll/', views.add_poll, name='add_poll'),
 ]

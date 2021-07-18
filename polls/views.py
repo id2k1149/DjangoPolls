@@ -7,8 +7,8 @@ from django.views.generic import ListView, CreateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from datetime import date, datetime
-from .models import Question, Voter, VoteCounter
-from .forms import RegistrationForm, QuestionForm
+from .models import Question, Voter, VoteCounter, Answer
+from .forms import RegistrationForm, QuestionForm, AnswerForm
 
 
 # Create your views here.
@@ -121,23 +121,41 @@ def result(request, question_id):
 
 
 # CreateView
-# class QuestionCreateView(LoginRequiredMixin, CreateView):
-#     fields = ('title',)
-#     model = Question
-#     success_url = reverse_lazy('polls:questions')
-#     template_name = 'polls/add_poll.html'
-#
-#     def post(self, request, *args, **kwargs):
-#         return super().post(request, *args, **kwargs)
-#
-#     def form_valid(self, form):
-#         return super().form_valid(form)
+class AnswerCreateView(LoginRequiredMixin, CreateView):
+    fields = ('answer',)
+    model = Answer
+    success_url = reverse_lazy('polls:questions')
+    template_name = 'polls/add_answer.html'
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        return super().form_valid(form)
 
 
 @login_required
 def add_poll(request):
     if request.method == 'GET':
         form = QuestionForm()
+        return render(request, 'polls/add_poll.html', context={'form': form})
+    else:
+        form = QuestionForm(request.POST, files=request.FILES)
+        if form.is_valid():
+            answers = VoteCounter.objects.all()
+            for answer in answers:
+                answer.votes = 0
+                answer.save()
+            form.save()
+            return HttpResponseRedirect(reverse('polls:questions'))
+        else:
+            return render(request, 'polls/add_poll.html', context={'form': form})
+
+
+@login_required
+def add_answer(request):
+    if request.method == 'GET':
+        form = AnswerForm()
         return render(request, 'polls/add_poll.html', context={'form': form})
     else:
         form = QuestionForm(request.POST, files=request.FILES)
