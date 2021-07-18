@@ -1,26 +1,32 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
-    Home
+Home
 {% endblock %}
 
 {% block content %}
-    {% if we_have_questions %}
-    <h1 class="mt-4">Please vote</h1>
-        <p>
-            <ul>
-                {% for question in we_have_questions %}
-                    <li>
-                        <a href="{% url 'polls:detail' question_id=question.id %}">
-                        {{ question.title }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </p>
-    {% else %}
-        <p>
-            <h1>Sorry, no more questions for today</h1>
-        </p>
-    {% endif %}
+
+<img src="{% static 'images/undraw_investing_7u74.svg' %}"
+     alt="Image"
+     class="img-fluid img-absolute">
+
+<div class="row mb-4" data-aos="fade-up" data-aos-delay="200">
+    <div class="col-lg-6 mr-auto">
+        <h1>Survey for your company</h1>
+        <p class="mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'polls:questions' %}" class="btn btn-primary mr-2 mb-2">
+                    Vote
+                </a>
+            {% else %}
+                <a href="{% url 'polls:login' %}" class="btn btn-primary mr-2 mb-2">
+                    Sign in
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
 {% endblock %}

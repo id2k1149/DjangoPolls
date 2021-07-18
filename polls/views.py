@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -6,11 +7,15 @@ from django.views.generic import ListView, CreateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from datetime import date, datetime
-from .models import Question, Voter
-from .forms import RegistrationForm
+from .models import Question, Voter, VoteCounter
+from .forms import RegistrationForm, QuestionForm
 
 
 # Create your views here.
+def main_view(request):
+    return render(request, 'polls/index.html')
+
+
 class UserLoginView(LoginView):
     template_name = 'polls/login.html'
 
@@ -22,8 +27,8 @@ class UserCreateView(CreateView):
     success_url = reverse_lazy('polls:login')
 
 
-class IndexView(ListView):
-    template_name = 'polls/index.html'
+class QuestionsListView(LoginRequiredMixin, ListView):
+    template_name = 'polls/questions.html'
     context_object_name = 'we_have_questions'
 
     def get_queryset(self):
@@ -35,7 +40,7 @@ class IndexView(ListView):
             return questions
 
 
-# @login_required
+@login_required
 def question_detail_view(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     max_votes_answer = question.answers.order_by('-votes').first()
@@ -46,18 +51,19 @@ def question_detail_view(request, question_id):
     voter.user = request.user
     voter.question = question
     if voter.voted_already():
-        return render(request, 'polls/detail.html', {
+        return render(request, 'polls/question.html', {
             'question': question,
             'error_message': "You already voted",
             'max_votes_answer': max_votes_answer,
         })
     else:
-        return render(request, 'polls/detail.html', {
+        return render(request, 'polls/question.html', {
             'question': question,
             'max_votes_answer': max_votes_answer,
         })
 
 
+@login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, id=question_id)
 
@@ -67,7 +73,7 @@ def vote(request, question_id):
         except (question.answers.get(id=request.POST['answer']).DoesNotExist,
                 UnicodeEncodeError,
                 ValueError):
-            return render(request, 'polls/detail.html', {
+            return render(request, 'polls/question.html', {
                 'question': question,
                 'error_message': "Invalid answer",
             })
@@ -96,13 +102,14 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:result', args=(question.id,)))
     else:
         max_votes_answer = question.answers.order_by('-votes').first()
-        return render(request, 'polls/detail.html', {
+        return render(request, 'polls/question.html', {
             'question': question,
             'error_message': "Please, choose an answer",
             'max_votes_answer': max_votes_answer,
         })
 
 
+@login_required
 def result(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     max_votes_answer = question.answers.order_by('-votes').first()
@@ -111,3 +118,35 @@ def result(request, question_id):
         'question': question,
         'max_votes_answer': max_votes_answer,
     })
+
+
+# CreateView
+# class QuestionCreateView(LoginRequiredMixin, CreateView):
+#     fields = ('title',)
+#     model = Question
+#     success_url = reverse_lazy('polls:questions')
+#     template_name = 'polls/add_poll.html'
+#
+#     def post(self, request, *args, **kwargs):
+#         return super().post(request, *args, **kwargs)
+#
+#     def form_valid(self, form):
+#         return super().form_valid(form)
+
+
+@login_required
+def add_poll(request):
+    if request.method == 'GET':
+        form = QuestionForm()
+        return render(request, 'polls/add_poll.html', context={'form': form})
+    else:
+        form = QuestionForm(request.POST, files=request.FILES)
+        if form.is_valid():
+            answers = VoteCounter.objects.all()
+            for answer in answers:
+                answer.votes = 0
+                answer.save()
+            form.save()
+            return HttpResponseRedirect(reverse('polls:questions'))
+        else:
+            return render(request, 'polls/add_poll.html', context={'form': form})
