@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Question, VoteCounter, Description, Voter, Answer
+from .models import Question, VotesCounter, Description, Voter, Answer
 
 
-class AnswerInline(admin.TabularInline):
-    model = Question.answers.through
+class VotesCounterInline(admin.TabularInline):
+    model = VotesCounter
     extra = 1
 
 
@@ -17,7 +17,7 @@ class QuestionAdmin(admin.ModelAdmin):
           'classes': ['collapse']}
          ),
     ]
-    inlines = [AnswerInline]
+    inlines = [VotesCounterInline]
 
     list_display = ('title', 'date_published', 'result')
 
@@ -32,7 +32,7 @@ class VoteCounterAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(VoteCounter, VoteCounterAdmin)
+admin.site.register(VotesCounter, VoteCounterAdmin)
 admin.site.register(Description)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(Answer)

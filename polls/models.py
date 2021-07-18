@@ -11,18 +11,18 @@ class Answer(models.Model):
         return self.answer
 
 
-class VoteCounter(models.Model):
-    answer_id = models.OneToOneField(Answer, on_delete=models.CASCADE)
-    votes = models.IntegerField(verbose_name="Votes", default=0)
+class Description(models.Model):
+    answer_id = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    description = models.CharField(max_length=64, unique=False)
+    digital_info = models.DecimalField(decimal_places=2, default=0, max_digits=5)
 
     def __str__(self):
-        return self.answer_id.answer
+        return self.description
 
 
 class Question(models.Model):
     title = models.CharField(max_length=128, verbose_name="Question", default='Where to have a lunch?')
     date_published = models.DateField(default=date.today)
-    answers = models.ManyToManyField(VoteCounter)
     result = models.ForeignKey(Answer,
                                on_delete=models.CASCADE,
                                blank=True,
@@ -33,20 +33,25 @@ class Question(models.Model):
         return self.title
 
 
-class Description(models.Model):
-    answer_id = models.ForeignKey(Answer, on_delete=models.CASCADE)
-    description = models.CharField(max_length=64, unique=False)
-    digital_info = models.DecimalField(decimal_places=2, default=0, max_digits=5)
+class VotesCounter(models.Model):
+    answer_id = models.OneToOneField(Answer,
+                                     on_delete=models.CASCADE,
+                                     verbose_name="Answer")
+    question_id = models.ForeignKey(Question,
+                                    on_delete=models.CASCADE,
+                                    verbose_name="Question")
+    votes = models.IntegerField(verbose_name="Votes", default=0)
 
     def __str__(self):
-        return self.description
+        return self.answer_id.answer
+
 
 
 class Voter(models.Model):
     date = models.DateField(default=date.today)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="User")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='Question')
-    answer = models.ForeignKey(VoteCounter, on_delete=models.CASCADE, verbose_name='Answer')
+    answer = models.ForeignKey(VotesCounter, on_delete=models.CASCADE, verbose_name='Answer')
 
     def __str__(self):
         return self.user.username
