@@ -43,7 +43,9 @@ class QuestionsListView(LoginRequiredMixin, ListView):
 @login_required
 def question_detail_view(request, question_id):
     question = get_object_or_404(Question, id=question_id)
+
     max_votes_answer = question.votescounter_set.order_by('-votes').first()
+    print(max_votes_answer)
     if max_votes_answer.votes == 0:
         max_votes_answer = ''
 

@@ -46,7 +46,6 @@ class VotesCounter(models.Model):
         return self.answer_id.answer
 
 
-
 class Voter(models.Model):
     date = models.DateField(default=date.today)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="User")
