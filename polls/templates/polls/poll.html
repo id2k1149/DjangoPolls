@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+AddQuestion
+{% endblock %}
+
+{% block content %}
+New question is ready
+<hr>
+<h1>{{ question }}</h1>
+{% for answer in question.question_votes_counters.all %}
+
+                {{ answer }}
+                <br>
+                <ul>
+                    {% for each_answer in answer.answer.description_set.all %}
+                        <li>
+                        {{ each_answer.text_info }} {{ each_answer.digital_info }}
+                        </li>
+                    {% endfor %}
+                </ul>
+        {% endfor %}
+
+
+{% endblock %}

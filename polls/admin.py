@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, VotesCounter, Description, Voter, Answer
+from .models import Question, VotesCounter, Description, Voter, Answer, Info
 
 
 class VotesCounterInline(admin.TabularInline):
@@ -27,12 +27,17 @@ class VoterAdmin(admin.ModelAdmin):
 
 
 class VoteCounterAdmin(admin.ModelAdmin):
-    list_display = ('answer_id', 'votes')
+    list_display = ('question', 'answer', 'votes')
+
+
+class DescriptionAdmin(admin.ModelAdmin):
+    list_display = ('answer', 'text_info', 'digital_info')
 
 
 # Register your models here.
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(VotesCounter, VoteCounterAdmin)
-admin.site.register(Description)
+admin.site.register(Description, DescriptionAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(Answer)
+admin.site.register(Info)

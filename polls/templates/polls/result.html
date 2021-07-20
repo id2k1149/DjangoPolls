@@ -12,7 +12,7 @@
     <hr>
 
     <ul>
-    {% for answer in question.votescounter_set.all|dictsortreversed:"votes" %}
+    {% for answer in question.question_votes_counters.all|dictsortreversed:"votes" %}
         <li>{{ answer }} - votes: {{ answer.votes }}</li>
     {% endfor %}
     </ul>

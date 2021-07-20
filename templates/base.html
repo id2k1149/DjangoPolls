@@ -63,8 +63,8 @@
                         <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block ml-0 pl-0">
                             {% if user.is_authenticated %}
                             <li><a href="{% url 'polls:questions' %}">Vote</a></li>
-                            <li><a href="{% url 'polls:add_poll' %}">Create survey</a></li>
-                            <li><a href="{% url 'polls:logout' %}">Log out</a></li>
+                            <li><a href="{% url 'polls:poll' %}">Create survey</a></li>
+                            <li><a href="{% url 'polls:logout' %}">({{user.username}}) Log out</a></li>
                             {% else %}
 
                             {% endif %}

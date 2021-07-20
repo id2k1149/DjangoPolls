@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ question.title }}</h1>
+    <h3>{{ question.title }}</h3>
 
     {% if error_message %}
         <p><strong>{{ error_message }}</strong></p>
@@ -13,16 +13,16 @@
 
     <form action="{% url 'polls:vote' question.id %}" method="post">
         {% csrf_token %}
-        {% for answer in question.votescounter_set.all %}
+        {% for answer in question.question_votes_counters.all %}
             <input type="radio"
                    name="answer"
                    value="{{ answer.id }}" />
                 {{ answer }}
                 <br>
                 <ul>
-                    {% for each_answer in answer.answer_id.description_set.all %}
+                    {% for each_answer in answer.answer.description_set.all %}
                         <li>
-                        {{ each_answer.description }} {{ each_answer.digital_info }}
+                        {{ each_answer.text_info }} {{ each_answer.digital_info }}
                         </li>
                     {% endfor %}
                 </ul>
