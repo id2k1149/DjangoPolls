@@ -47,11 +47,6 @@ class QuestionsListView(LoginRequiredMixin, ListView):
 def question_detail_view(request, question_id):
     question = get_object_or_404(Question, id=question_id)
 
-    # max_votes_answer = question.votescounter_set.order_by('-votes').first()
-    # print(max_votes_answer)
-    # if max_votes_answer.votes == 0:
-    #     max_votes_answer = ''
-
     voter = Voter()
     voter.user = request.user
     voter.question = question
@@ -59,12 +54,12 @@ def question_detail_view(request, question_id):
         return render(request, 'polls/question.html', {
             'question': question,
             'error_message': "You already voted",
-            # 'max_votes_answer': max_votes_answer,
+
         })
     else:
         return render(request, 'polls/question.html', {
             'question': question,
-            # 'max_votes_answer': max_votes_answer,
+
         })
 
 
@@ -126,31 +121,6 @@ def result(request, question_id):
 
 
 @login_required
-def add_poll(request):
-    new_question = Question()
-    now = datetime.now()
-    date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
-    new_title = new_question.title + " " + date_time
-    new_question.title = new_title
-    new_question.save()
-    print(new_question, new_question.pk)
-
-    answers = list(Answer.objects.all())
-    total_answers = len(answers)
-    random_number = randrange(2, 4)
-
-    random_answers = random.sample(answers, random_number)
-
-    # if you want only a single random item
-    # random_item = random.choice(answers)
-
-    for each in random_answers:
-        VotesCounter.objects.create(answer=each, question=new_question)
-
-    return render(request, 'polls/poll.html', context={'question': new_question})
-
-
-@login_required
 def new_poll(request):
     if request.method == 'GET':
         form = QuestionForm()
@@ -160,7 +130,6 @@ def new_poll(request):
         if form.is_valid():
             form.save()
 
-            # answers = Question.objects.filter(date_published=date.today()).answers
             question_qs = Question.objects.filter(date_published=date.today())
 
             for each in question_qs:
@@ -185,7 +154,6 @@ def update(request):
 
     answers = list(answers)
     random_number_1 = randrange(2, len(answers))
-    # random_number_1 = randrange(2, 4)
     random_answers = random.sample(answers, random_number_1)
 
     Description.objects.filter(date_published=date.today()).delete()
