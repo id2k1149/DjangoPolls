@@ -10,7 +10,7 @@ class VotesCounterInline(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,
-         {'fields': ['title', 'result']}
+         {'fields': ['title', 'answers', 'result']}
          ),
         ('Date info',
          {'fields': ['date_published'],
@@ -19,7 +19,7 @@ class QuestionAdmin(admin.ModelAdmin):
     ]
     inlines = [VotesCounterInline]
 
-    list_display = ('title', 'date_published', 'result')
+    list_display = ('date_published', 'title', 'result')
 
 
 class VoterAdmin(admin.ModelAdmin):
@@ -31,7 +31,11 @@ class VoteCounterAdmin(admin.ModelAdmin):
 
 
 class DescriptionAdmin(admin.ModelAdmin):
-    list_display = ('answer', 'text_info', 'digital_info')
+    list_display = ('date_published', 'answer', 'text_info', 'digital_info')
+
+
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('answer', 'is_active')
 
 
 # Register your models here.
@@ -39,5 +43,5 @@ admin.site.register(Question, QuestionAdmin)
 admin.site.register(VotesCounter, VoteCounterAdmin)
 admin.site.register(Description, DescriptionAdmin)
 admin.site.register(Voter, VoterAdmin)
-admin.site.register(Answer)
+admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Info)

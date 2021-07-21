@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Update
+{% endblock %}
+
+{% block content %}
+    {% if today_answers %}
+    <h1 class="mt-4">Today we have menu from</h1>
+        <p>
+            <ul>
+                {% for answer in today_answers %}
+                    <li>
+                        {{ answer}}
+                        <br>
+                        <ul>
+                            {% for each in today_description %}
+                            {% if each.answer == answer %}
+                                <li>
+                                {{ each.text_info }} {{ each.digital_info }}
+                                </li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% else %}
+        <p>
+            <h1>Sorry,</h1>
+            <h1>there are no menu for today</h1>
+        </p>
+    {% endif %}
+{% endblock %}
