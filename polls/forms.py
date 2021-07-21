@@ -1,8 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from datetime import date, datetime
 from django.contrib.auth.models import User
-from .models import Question, VotesCounter, Answer, Description
+from .models import Question, Answer
 
 
 class RegistrationForm(UserCreationForm):
