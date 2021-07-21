@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from datetime import date, datetime
 from django.contrib.auth.models import User
-from .models import Question, VotesCounter
+from .models import Question, VotesCounter, Answer, Description
 
 
 class RegistrationForm(UserCreationForm):
@@ -15,7 +16,7 @@ class QuestionForm(forms.ModelForm):
                             widget=forms.TextInput(attrs={'placeholder': 'Question', 'class': 'form-control'}))
 
     answers = forms.ModelMultipleChoiceField(label='Options',
-                                             queryset=VotesCounter.objects.all(),
+                                             queryset=Answer.objects.filter(is_active=True),
                                              widget=forms.CheckboxSelectMultiple())
 
     class Meta:

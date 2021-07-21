@@ -10,7 +10,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from datetime import date, datetime
 from random import randrange
-from .models import Question, Voter, VotesCounter, Answer
+from .models import Question, Voter, VotesCounter, Answer, Description, Info
 from .forms import RegistrationForm, QuestionForm
 
 
@@ -148,3 +148,59 @@ def add_poll(request):
         VotesCounter.objects.create(answer=each, question=new_question)
 
     return render(request, 'polls/poll.html', context={'question': new_question})
+
+
+@login_required
+def new_poll(request):
+    if request.method == 'GET':
+        form = QuestionForm()
+        return render(request, 'polls/newpoll.html', context={'form': form})
+    else:
+        form = QuestionForm(request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+
+            # answers = Question.objects.filter(date_published=date.today()).answers
+            question_qs = Question.objects.filter(date_published=date.today())
+
+            for each in question_qs:
+                question_pk = each.pk
+                question = Question.objects.get(pk=question_pk)
+                answers = each.answers.all()
+
+            for each in answers:
+                VotesCounter.objects.create(answer=each, question=question)
+
+            return HttpResponseRedirect(reverse('polls:questions'))
+        else:
+            return render(request, 'polls/newpoll.html', context={'form': form})
+
+
+@login_required
+def update(request):
+    answers = Answer.objects.all()
+    for each in answers:
+        each.is_active = False
+        each.save()
+
+    answers = list(answers)
+    random_number_1 = randrange(2, len(answers))
+    # random_number_1 = randrange(2, 4)
+    random_answers = random.sample(answers, random_number_1)
+
+    Description.objects.filter(date_published=date.today()).delete()
+    for each in random_answers:
+        answer_to_change = Answer.objects.get(answer=each)
+        answer_to_change.is_active = True
+        answer_to_change.save()
+        info = list(Info.objects.all())
+        random_number_2 = randrange(2, 4)
+        random_info = random.sample(info, random_number_2)
+
+        for item in random_info:
+            Description.objects.create(answer=each, text_info=item, digital_info=randrange(1, 100))
+
+    today_description = Description.objects.filter(date_published=date.today())
+
+    return render(request, "polls/update.html", context={'today_description': today_description,
+                                                         'today_answers': random_answers})
